@@ -6,9 +6,50 @@
     <title>Mundo - Highcharts</title>
     <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <style>
+    
+        header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 0px;
+            text-align: center;
+            position: fixed;
+            top: 0px;
+            width: 100%;
+            z-index: 1000;
+        }
+
+
+        .navbar {
+            background-color: #f3d77e;
+            overflow: hidden;
+            width: 100%;
+            position: fixed;
+            top: 80px; 
+            z-index: 999;
+            display: flex;
+            justify-content: center; 
+        }
+
+        .navbar a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 10px 24px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            background-color: #f9f9f9;
+            color: black;
+        }
         body {
-            background-color: black;
-            color: #fff;
+            font-family: 'Arial', sans-serif;
+            background: radial-gradient(#3869b4, #031f4b);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 160px; /* Para asegurar espacio para el header y el navbar */
         }
         .main {
             padding: 20px;
@@ -17,10 +58,22 @@
             height: 500px;
             width: 100%;
         }
+
+
     </style>
 </head>
 <body>
+    
+    <header>
+        <h1>Modelo Predictivo de Cultivos</h1>
+    </header>
 
+<!-- Barra de Navegación -->
+    <div class="navbar">
+        <a href="/">Centro de Información</a>
+        <a href="{{ url_for('mundo') }}">Planea mi Cultivo</a>
+        <a href="{{ url_for('manual') }}">Cuida mi Cultivo</a>
+    </div>
 <div class="main">
     <div id="container"></div>
 
@@ -58,7 +111,6 @@
             datasets = [{
                 type: 'Land Surface (day) and Sea Temperature',
                 title: 'Land Surface (day) and Sea Temperature in August 2022',
-                url: 'https://www.highcharts.com/samples/data/geoheatmap-land-sea-day-temp-august-2022.json',
                 colorAxis: {
                     min: -20,
                     max: 40,
@@ -123,12 +175,23 @@
             },
 
             colorAxis: {
-                gridLineColor: '#000'
+                min: -20,
+                max: 40,
+                gridLineColor: '#000',
+                stops: [
+                    [0, '#9589d3'],
+                    [0.16, '#7cc4be'],
+                    [0.33, '#5d8bbe'],
+                    [0.5, '#688f2c'],
+                    [0.66, '#dbac0b'],
+                    [0.83, '#e75e14'],
+                    [1, '#852809']
+                ]
             },
 
             tooltip: {
                 headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon}° Lat: {point.point.lat}°</span><br/>',
-                pointFormat: 'Value: {point.value:.2f}'
+                pointFormat: 'Value: {point.value:.2f}°C'
             },
 
             series: [{
