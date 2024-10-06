@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo Predictivo de Cultivos</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: radial-gradient(#3869b4, #031f4b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 160px; /* Para asegurar espacio para el header y el navbar */
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar {
+            background-color: #f3d77e;
+            overflow: hidden;
+            width: 100%;
+            position: fixed;
+            top: 80px; 
+            z-index: 999;
+            display: flex;
+            justify-content: center; 
+        }
+
+        .navbar a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 10px 24px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            background-color: #f9f9f9;
+            color: black;
+        }
+
+        .container {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px; /* Ajustar para dejar espacio al navbar */
+        }
+
+        .world {
+            width: 30vw;
+            height: 30vw;
+            max-width: 400px;
+            max-height: 400px;
+            border-radius: 50%;
+            background-image: url('static/img.png');
+            background-size: cover;
+            box-shadow: inset 0 0 20px #000, inset -40px -10px 20px rgba(3, 32, 56, 0.7);
+            animation: world 10s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes world {
+            0% {
+                background-position-x: 0;
+            }
+            100% {
+                background-position-x: -800px;
+            }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            max-width: 600px;
+        }
+
+        .form-container, .results-container {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2, .results-container h3 {
+            color: #2c3e50;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #2c3e50;
+        }
+
+        select, input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #2c3e50;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3498db;
+        }
+
+        .results-container {
+            background-color: #f0f4f7;
+            border: 3px solid #2c3e50;
+        }
+
+        .results-container p {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        /* Ocultar los select y labels inicialmente */
+        .hidden {
+            display: none;
+        }
+        
+        /* Cambiar el color del texto del option por defecto a negro */
+        #estado option[value=""] {
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Modelo Predictivo de Cultivos</h1>
+    </header>
+
+    <!-- Barra de Navegación -->
+    <div class="navbar">
+        <a href="/">Centro de Información</a>
+        <a href="{{ url_for('mundo') }}">Planea mi Cultivo</a>
+        <a href="{{ url_for('manual') }}">Cuida mi Cultivo</a>
+    </div>
+    
+    <div class="container">
+        <div class="world"></div> <!-- Planeta a la izquierda -->
+
+        <div class="main-content">
+            <div class="form-container">
+                <h2>Selección por Zona Predefinida</h2>
+                <label for="planeta">Seleccionar un planeta:</label>
+                <select id="planeta">
+                    <option value="">Seleccionar un exo/planeta</option>
+                    <option value="Tierra" selected>Tierra</option> <!-- Opción de Tierra marcada por defecto -->
+                    <option value="Marte">Marte</option>
+                </select>
+
+                <label for="pais" class="pais-label">Seleccionar un país:</label>
+                <select id="pais">
+                    <option value="">Seleccione un país</option>
+                    <option value="Mexico">México</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="Canada">Canadá</option>
+                </select>
+
+                <label for="estado" class="estado-label">Estado/Región:</label>
+                <select id="estado" disabled>
+                    <option value="">Seleccione primero un país</option>
+                </select>
+
+                <label for="tipo_suelo" class="tipo-suelo-label">Tipo de suelo:</label>
+                <select id="tipo_suelo">
+                    <option value="">Seleccione tipo de suelo</option>
+                    <option value="Arenoso">Arenoso</option>
+                    <option value="Arcilloso">Arcilloso</option>
+                    <option value="Limoso">Limoso</option>
+                    <option value="Mixto">Mixto</option>
+                    <option value="Calcáreo">Calcáreo</option>
+                </select>
+
+                <button id="submit">Generar predicción</button>
+            </div>
+
+            <!-- Contenedor para los resultados -->
+            <div class="results-container">
+                <h3>Resultados de la predicción</h3>
+                <p>Probabilidad de éxito del cultivo: -</p>
+                <p>Probabilidad de fenómeno natural que afecte: -</p>
+                <p>Recomendación de tipo de cultivo: -</p>
+                <p>Sugerencias de manejo agronómico: -</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const planetaSelect = document.getElementById('planeta');
+            const paisSelect = document.getElementById('pais');
+            const estadoSelect = document.getElementById('estado');
+            const tipoSueloSelect = document.getElementById('tipo_suelo');
+            const worldElement = document.querySelector('.world');
+
+            // Función para mostrar u ocultar los selects y labels dependiendo del planeta seleccionado
+            function toggleSelects(selectedPlanet) {
+                const hiddenClass = 'hidden';
+                const paisLabel = document.querySelector('.pais-label');
+                const estadoLabel = document.querySelector('.estado-label');
+                const tipoSueloLabel = document.querySelector('.tipo-suelo-label');
+
+                if (selectedPlanet === 'Marte') {
+                    paisSelect.classList.add(hiddenClass);
+                    estadoSelect.classList.add(hiddenClass);
+                    tipoSueloSelect.classList.add(hiddenClass);
+                    paisLabel.classList.add(hiddenClass);
+                    estadoLabel.classList.add(hiddenClass);
+                    tipoSueloLabel.classList.add(hiddenClass);
+                    
+                    // Cambiar la imagen a marte.png
+                    worldElement.style.backgroundImage = "url('static/marte.png')";
+                } else {
+                    paisSelect.classList.remove(hiddenClass);
+                    estadoSelect.classList.remove(hiddenClass);
+                    tipoSueloSelect.classList.remove(hiddenClass);
+                    paisLabel.classList.remove(hiddenClass);
+                    estadoLabel.classList.remove(hiddenClass);
+                    tipoSueloLabel.classList.remove(hiddenClass);
+                    
+                    // Cambiar la imagen de vuelta a img.png
+                    worldElement.style.backgroundImage = "url('static/img.png')";
+                }
+            }
+
+            // Función para habilitar el select de estado y poblarlo
+            function updateEstados() {
+                const paisValue = paisSelect.value;
+                estadoSelect.innerHTML = '<option value="">Seleccione primero un país</option>'; // Reiniciar opciones de estado
+
+                if (paisValue === 'Mexico') {
+                    estadoSelect.innerHTML += '<option value="Jalisco">Jalisco</option>';
+                    estadoSelect.innerHTML += '<option value="CDMX">CDMX</option>';
+                    estadoSelect.innerHTML += '<option value="Puebla">Puebla</option>';
+                } else if (paisValue === 'Estados Unidos') {
+                    estadoSelect.innerHTML += '<option value="California">California</option>';
+                    estadoSelect.innerHTML += '<option value="Texas">Texas</option>';
+                    estadoSelect.innerHTML += '<option value="Florida">Florida</option>';
+                } else if (paisValue === 'Canada') {
+                    estadoSelect.innerHTML += '<option value="Ontario">Ontario</option>';
+                    estadoSelect.innerHTML += '<option value="Quebec">Quebec</option>';
+                    estadoSelect.innerHTML += '<option value="British Columbia">British Columbia</option>';
+                }
+
+                // Habilitar el select de estado si hay opciones
+                estadoSelect.disabled = estadoSelect.options.length === 1; // Si solo hay una opción (la predeterminada)
+            }
+
+            // Event listeners
+            planetaSelect.addEventListener('change', function() {
+                toggleSelects(planetaSelect.value);
+            });
+
+            paisSelect.addEventListener('change', updateEstados);
+        });
+    </script>
+</body>
+</html>
