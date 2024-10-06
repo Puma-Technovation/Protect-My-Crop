@@ -4,11 +4,149 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tierra</title>
-    <!-- Cambia esta línea para usar url_for -->
+    <title>Modelo Predictivo de Cultivos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f7;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .world {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-image: url('path/to/planet-image.png'); /* Cambia esto por la imagen de tu planeta */
+            background-size: cover;
+            position: relative;
+            animation: spin 10s linear infinite; /* Gira el planeta */
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            color: #2c3e50;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #2c3e50;
+        }
+
+        select, input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #2c3e50;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3498db;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Modelo Predictivo de Cultivos</h1>
+    </header>
+    
     <div class="world"></div>
+
+    <div class="form-container">
+        <h2>Formulario de Selección por Zona Predefinida</h2>
+        <label for="planeta">Seleccionar un planeta:</label>
+        <select id="planeta">
+            <option value="">Seleccionar un exo/planeta</option>
+            <option value="Tierra">Tierra</option>
+            <option value="Marte">Marte</option>
+            <option value="AU Mic b">AU Mic b</option>
+        </select>
+
+        <label for="pais">Seleccionar un país:</label>
+        <select id="pais">
+            <option value="">Seleccione un país</option>
+            <option value="Mexico">México</option>
+            <option value="Estados Unidos">Estados Unidos</option>
+            <option value="Canada">Canadá</option>
+        </select>
+
+        <label for="estado">Estado/Región:</label>
+        <select id="estado">
+            <option value="">Seleccione primero un país</option>
+            <!-- Aquí se cargarían los estados dinámicamente -->
+        </select>
+
+        <label for="tipo_suelo">Tipo de suelo:</label>
+        <select id="tipo_suelo">
+            <option value="">Seleccione tipo de suelo</option>
+            <option value="Arenoso">Arenoso</option>
+            <option value="Arcilloso">Arcilloso</option>
+            <option value="Limoso">Limoso</option>
+            <option value="Mixto">Mixto</option>
+            <option value="Calcáreo">Calcáreo</option>
+        </select>
+
+        <button id="submit">Generar predicción</button>
+    </div>
+
+    <script>
+        
+        document.getElementById('pais').addEventListener('change', function() {
+            const estadoSelect = document.getElementById('estado');
+            estadoSelect.innerHTML = ''; // Limpiar opciones
+
+            const estados = {
+                'Mexico': ['Jalisco', 'Nuevo León', 'Ciudad de México', 'Yucatán', 'Veracruz'],
+                'Estados Unidos': ['California', 'Texas', 'Nueva York', 'Florida', 'Illinois'],
+                'Canada': ['Ontario', 'Quebec', 'Columbia Británica', 'Alberta', 'Manitoba']
+            };
+
+            const selectedPais = this.value;
+            if (selectedPais in estados) {
+                estados[selectedPais].forEach(function(estado) {
+                    const option = document.createElement('option');
+                    option.textContent = estado;
+                    option.value = estado;
+                    estadoSelect.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.textContent = 'Seleccione primero un país';
+                estadoSelect.appendChild(option);
+            }
+        });
+    </script>
 </body>
 </html>
