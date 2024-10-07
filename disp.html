@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valores Aleatorios y Estado del Cultivo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: radial-gradient(#3869b4, #031f4b);
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .data-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .data-list li {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .value {
+            font-weight: normal;
+            color: #007bff;
+        }
+
+        #estado-cultivo {
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .button-container {
+            margin-left: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        canvas {
+            max-width: 80%;
+            max-height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="content">
+            <ul class="data-list">
+                <li><span class="label">Humedad del suelo:</span> <span id="humedad" class="value">-</span></li>
+                <li><span class="label">Temperatura promedio:</span> <span id="temperatura" class="value">-</span></li>
+                <li><span class="label">Precipitación (mm):</span> <span id="precipitacion" class="value">-</span></li>
+                <li><span class="label">Altitud (msnm):</span> <span id="altitud" class="value">-</span></li>
+                <li><span class="label">pH del suelo:</span> <span id="ph" class="value">-</span></li>
+            </ul>
+            <label>Sincronización de dispositivo</label>
+            
+        </div>
+
+        <div id="estado-cultivo">Estado del Cultivo: -</div>
+
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        // Función para generar un número aleatorio entre dos valores
+        function getRandomValue(min, max) {
+            return (Math.random() * (max - min) + min).toFixed(2);
+        }
+
+        // Función para actualizar los valores aleatorios
+        function updateValues() {
+            document.getElementById('humedad').textContent = getRandomValue(0, 100) + '%';
+            document.getElementById('temperatura').textContent = getRandomValue(-10, 40) + '°C';
+            document.getElementById('precipitacion').textContent = getRandomValue(0, 500) + ' mm';
+            const altitudValue = getRandomValue(0, 5000);
+            document.getElementById('altitud').textContent = altitudValue + ' msnm';
+            document.getElementById('ph').textContent = getRandomValue(3, 9);
+
+            // Actualizar el estado del cultivo basado en la altitud
+            const estadoCultivo = document.getElementById('estado-cultivo');
+            if (altitudValue >= 2500) {
+                estadoCultivo.textContent = 'Estado del Cultivo: Bueno';
+                estadoCultivo.style.color = 'green';
+            } else {
+                estadoCultivo.textContent = 'Estado del Cultivo: Riesgoso';
+                estadoCultivo.style.color = 'red';
+            }
+        }
+
+        // Actualiza los valores inmediatamente y luego cada 2 segundos
+        updateValues();
+        setInterval(updateValues, 2000);
+
+        // Gráfica con Chart.js
+        let ctx = document.getElementById('myChart').getContext('2d');
+        let dataX = [];
+        let dataY = [];
+        let time = 0;
+        let interval;
+
+        const config = {
+            type: 'line',
+            data: {
+                labels: dataX,
+                datasets: [{
+                    label: 'Pronóstico del Momento',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    data: dataY,
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        ticks: {
+                            display: false  // Oculta las etiquetas del eje X
+                        },
+                        grid: {
+                            display: false  // Opcional: oculta la cuadrícula del eje X
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Variable',
+                            color: '#666'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        };
+
+        const myChart = new Chart(ctx, config);
+
+        function generateRandomData() {
+            time += 1;
+            const randomY = Math.floor(Math.random() * 100); // Genera un valor aleatorio entre 0 y 100
+            dataX.push(time);
+            dataY.push(randomY);
+
+            if (dataX.length > 10) {
+                dataX.shift(); // Elimina el primer dato si excede el tamaño
+                dataY.shift();
+            }
+
+            myChart.update();
+        }
+
+        function startUpdatingChart() {
+            interval = setInterval(generateRandomData, 1000);
+        }
+
+
+
+        // Inicia la gráfica y reinicia cada 10 segundos
+        startUpdatingChart();
+        setInterval(resetChart, 10000);
+    </script>
+
+</body>
+</html>
