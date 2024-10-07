@@ -206,43 +206,49 @@
             <!-- Nav para cambiar entre automático y manual -->
             <div class="form-navbar">
                 <a href="#manual" class="active">Manual</a>
-                <a href="#automatico">Automático</a>
+                <a href="{{ url_for('disp') }}" target="_blank">Automático</a>
+
             </div>
-            <h2>Ingreso Manual de Datos</h2>
-            <p id="form-title">Ingreso Manual de Datos</p> <!-- Título añadido aquí -->
+            <h2 id="form-title">Ingreso Manual de Datos</h2>
 
-            <label for="planeta">Seleccionar un planeta:</label>
-            <select id="planeta">
-                <option value="Tierra" selected>Tierra</option> 
-                <option value="Marte">Marte</option>
-                <option value="">Seleccionar un Exoplaneta</option>
-            </select>
-
-            <label for="humedad">Humedad del suelo (%):</label>
-            <input type="text" id="humedad" placeholder="Ingrese humedad del suelo...">
-            
-            <label for="temperatura">Temperatura promedio (°C):</label>
-            <input type="text" id="temperatura" placeholder="Ingrese temperatura promedio...">
-            
-            <label for="precipitacion">Precipitación (mm):</label>
-            <input type="text" id="precipitacion" placeholder="Ingrese precipitación...">
-            
-            <label for="altitud">Altitud (msnm):</label>
-            <input type="text" id="altitud" placeholder="Ingrese altitud...">
-            
-            <label for="ph">pH del suelo:</label>
-            <input type="text" id="ph" placeholder="Ingrese pH del suelo...">
-
-            <button>Generar predicción</button>
+            <div id="manual-content">
+                <form action="{{ url_for('predict_2') }}" method="POST">  <!-- Agregado el formulario -->
+                    <label for="planeta">Seleccionar un planeta:</label>
+                    <select id="planeta" name="planeta">
+                        <option value="Tierra" selected>Tierra</option>
+                        <option value="Marte">Marte</option>
+                        <option value="">Seleccionar un Exoplaneta</option>
+                    </select>
+                
+                    <label for="humedad">Humedad del suelo (%):</label>
+                    <input type="text" id="humedad" name="humedad" placeholder="Ingrese humedad del suelo...">
+                
+                    <label for="temperatura">Temperatura promedio (°C):</label>
+                    <input type="text" id="temperatura" name="temperatura" placeholder="Ingrese temperatura promedio...">
+                
+                    <label for="precipitacion">Precipitación (mm):</label>
+                    <input type="text" id="precipitacion" name="precipitacion" placeholder="Ingrese precipitación...">
+                
+                    <label for="altitud">Altitud (msnm):</label>
+                    <input type="text" id="altitud" name="altitud" placeholder="Ingrese altitud...">
+                
+                    <label for="ph">pH del suelo:</label>
+                    <input type="text" id="ph" name="ph" placeholder="Ingrese pH del suelo...">
+                
+                    <button type="submit">Generar predicción</button> 
+                </form>
+            </div>
         </div>
 
         <!-- Segundo contenedor -->
         <div class="results-container">
-            <h3>Resultados de la predicción</h3>
-            <p>Probabilidad de éxito del cultivo: -</p>
-            <p>Probabilidad de fenómeno natural que afecte: -</p>
-            <p>Recomendación de tipo de cultivo: -</p>
-            <p>Sugerencias de manejo agronómico: -</p>
+            <p>Probabilidad de éxito del cultivo: 
+                {% if probabilidad is not none %}
+                    {{ probabilidad }} <!-- Asegúrate de ajustar esto si el modelo devuelve un formato diferente -->
+                {% else %}
+                    No disponible
+                {% endif %}
+            </p>
         </div>
     </div>
 
@@ -251,18 +257,31 @@
         const links = document.querySelectorAll('.form-navbar a');
         const formContainer = document.querySelector('.form-container');
         const formTitle = document.getElementById('form-title');
-
+        const manualContent = document.getElementById('manual-content');
+        const resultsContainer = document.querySelector('.results-container');
+    
         links.forEach(link => {
             link.addEventListener('click', function() {
                 links.forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
+    
                 if (this.getAttribute('href') === '#manual') {
-                    formTitle.textContent = 'Ingreso Manual de Datos';
-                } else {
-                    formTitle.textContent = 'Ingreso Automático de Datos';
-                }
+                    formTitle.innerText = 'Ingreso Manual de Datos';
+                    manualContent.classList.remove('hidden');
+                    resultsContainer.classList.remove('hidden');
+                    // Borrar contenido de resultados al cambiar a manual
+                    resultsContainer.innerHTML = `
+                        <h3>Resultados de la predicción</h3>
+                        <p>Probabilidad de éxito del cultivo: -</p>
+                        <p>Probabilidad de fenómeno natural que afecte: -</p>
+                        <p>Recomendación de tipo de cultivo: -</p>
+                        <p>Sugerencias de manejo agronómico: -</p>
+                    `;
+                } 
             });
         });
     </script>
+
+
 </body>
 </html>
