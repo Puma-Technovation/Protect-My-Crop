@@ -180,44 +180,42 @@
         <div class="main-content">
             <div class="form-container">
                 <h2>Selección por Zona Predefinida</h2>
-                <label for="planeta">Seleccionar un planeta:</label>
-                <select id="planeta">
-                    <option value="">Seleccionar un exo/planeta</option>
-                    <option value="Tierra" selected>Tierra</option> <!-- Opción de Tierra marcada por defecto -->
-                    <option value="Marte">Marte</option>
-                    <option value="AU Mic b">AU Mic b</option>
-                </select>
-
-                <label for="pais" class="pais-label">Seleccionar un país:</label>
-                <select id="pais">
-                    <option value="">Seleccione un país</option>
-                    <option value="Mexico">México</option>
-                    <option value="Estados Unidos">Estados Unidos</option>
-                    <option value="Canada">Canadá</option>
-                </select>
-
-                <label for="estado" class="estado-label">Estado/Región:</label>
-                <select id="estado" disabled>
-                    <option value="">Seleccione primero un país</option>
-                </select>
-
-                <label for="tipo_suelo" class="tipo-suelo-label">Tipo de suelo:</label>
-                <select id="tipo_suelo">
-                    <option value="">Seleccione tipo de suelo</option>
-                    <option value="Arenoso">Arenoso</option>
-                    <option value="Arcilloso">Arcilloso</option>
-                    <option value="Limoso">Limoso</option>
-                    <option value="Mixto">Mixto</option>
-                    <option value="Calcáreo">Calcáreo</option>
-                </select>
-
-                <button id="submit">Generar predicción</button>
-            </div>
+                <form action="{{ url_for('predict_3') }}" method="POST">
+                    <label for="planeta">Seleccionar un planeta:</label>
+                    <select id="planeta" name="planeta">
+                        <option value="">Seleccionar un exo/planeta</option>
+                        <option value="Tierra" selected>Tierra</option>
+                        <option value="Marte">Marte</option>
+                    </select>
+            
+                    <label for="pais" class="pais-label">Seleccionar un país:</label>
+                    <select id="pais" name="pais">
+                        <option value="">Seleccione un país</option>
+                        <option value="Mexico">México</option>
+                    </select>
+            
+                    <label for="estado" class="estado-label">Estado/Región:</label>
+                    <select id="estado" name="estado" disabled>
+                        <option value="">Seleccione primero un país</option>
+                    </select>
+            
+                    <label for="tipo_suelo" class="tipo-suelo-label">Tipo de suelo:</label>
+                    <select id="tipo_suelo" name="tipo_suelo">
+                        <option value="">Seleccione tipo de suelo</option>
+                        <option value="Arenoso">Arenoso</option>
+                        <option value="Arcilloso">Arcilloso</option>
+                        <option value="Limoso">Limoso</option>
+                        <option value="Mixto">Mixto</option>
+                        <option value="Calcáreo">Calcáreo</option>
+                    </select>
+            
+                    <button type="submit">Generar predicción</button>
+                </form>
 
             <!-- Contenedor para los resultados -->
             <div class="results-container">
                 <h3>Resultados de la predicción</h3>
-                <p>Probabilidad de éxito del cultivo: -</p>
+                <p>Probabilidad de éxito del cultivo: {{ qro_pro }}</p>
                 <p>Probabilidad de fenómeno natural que afecte: -</p>
                 <p>Recomendación de tipo de cultivo: -</p>
                 <p>Sugerencias de manejo agronómico: -</p>
@@ -269,18 +267,9 @@
                 estadoSelect.innerHTML = '<option value="">Seleccione primero un país</option>'; // Reiniciar opciones de estado
 
                 if (paisValue === 'Mexico') {
-                    estadoSelect.innerHTML += '<option value="Jalisco">Jalisco</option>';
-                    estadoSelect.innerHTML += '<option value="CDMX">CDMX</option>';
-                    estadoSelect.innerHTML += '<option value="Puebla">Puebla</option>';
-                } else if (paisValue === 'Estados Unidos') {
-                    estadoSelect.innerHTML += '<option value="California">California</option>';
-                    estadoSelect.innerHTML += '<option value="Texas">Texas</option>';
-                    estadoSelect.innerHTML += '<option value="Florida">Florida</option>';
-                } else if (paisValue === 'Canada') {
-                    estadoSelect.innerHTML += '<option value="Ontario">Ontario</option>';
-                    estadoSelect.innerHTML += '<option value="Quebec">Quebec</option>';
-                    estadoSelect.innerHTML += '<option value="British Columbia">British Columbia</option>';
-                }
+                    estadoSelect.innerHTML += '<option value="Querétaro">Querétaro</option>';
+                    
+                } 
 
                 // Habilitar el select de estado si hay opciones
                 estadoSelect.disabled = estadoSelect.options.length === 1; // Si solo hay una opción (la predeterminada)
